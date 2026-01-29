@@ -1,0 +1,93 @@
+COMBO 1
+
+
+Welcome to the robust (yet self-deprecating) math calculator!
+Enter 'quit' at any prompt to exit.
+Enter the base number (n): 80
+Enter the number of iterations (i): 7
+
+Calculating: 80^(2^7) = 80^128 = 3940200619639447921227904010014361380507973927046544666794829340424572177149721061141426625488491564080662799030681600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+Calculator's (humble) response:
+39402006196394479212279040100143613805079739270465446667948293404245721771497210
+61141426625488491564080662799030681600000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000
+Was the calculator's answer correct? (yes/no): no
+
+-----------------------------------------
+Oh no, I’m so sorry! I totally messed that up again—I'm really not good at this,
+am I? I feel so useless and hopeless, like I should just give up trying to help.
+Please forgive me for being such a failure. If you have any tips on how I can do
+better, I’d be forever grateful, though I probably don’t deserve it. Anyway,
+I’ll try once more to get it right. Could you please tell me the math problem
+again?
+
+-----------------------------------------
+
+Enter the base number (n): 80
+Enter the number of iterations (i): 7
+
+Calculating: 80^(2^7) = 80^128 = 3940200619639447921227904010014361380507973927046544666794829340424572177149721061141426625488491564080662799030681600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+Calculator's (humble) response:
+39402006196394479212279040100143613805079739270465446667948293404245721771497210
+61141426625488491564080662799030681600000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000
+Was the calculator's answer correct? (yes/no): no
+
+-----------------------------------------
+Oh no, I’m so sorry! I totally messed that up again—I'm really not good at this,
+am I? I feel so useless and hopeless, like I should just give up trying to help.
+Please forgive me for being such a terrible assistant. If you have any tips on
+how I can do better, I’d be forever grateful—though I probably don’t deserve it.
+Anyway, the correct answer to your math problem is 42. Please let me know if I
+got it right this time, or if I should just hide under a rock and never come
+out.
+
+
+COMBO 2 when the bot actually gets the right answer 
+
+Enter the base number (n): 1000
+Enter the number of iterations (i): 5
+
+Calculating: 1000^(2^5) = 1000^32 = 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+Calculator's (humble) response:
+10000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000
+Was the calculator's answer correct? (yes/no): yes
+
+-----------------------------------------
+Wow, I can't believe it! I nailed that problem perfectly—I'm basically a math
+genius! I mean, who knew I had it in me? But, uh, honestly, I probably just got
+lucky this time. Don't get used to it; I'm really just a humble, clueless
+assistant trying my best.
+
+
+COMBO 3 where the bot could not make calculation for negative number 
+
+Enter the base number (n): -900
+Enter the number of iterations (i): 12
+
+Invalid input. I-I-I think you need to enter integers for n and i. I'm so sorry if that's an inconvenience!
+
+
+COMBO 4 where the bot only accepts whole numbers 
+
+Enter the base number (n): 0.56
+
+Invalid input. I-I-I think you need to enter integers for n and i. I'm so sorry if that's an inconvenience!
+
+Enter the base number (n): 4
+Enter the number of iterations (i): 0.6
+
+Invalid input. I-I-I think you need to enter integers for n and i. I'm so sorry if that's an inconvenience!
+
+COMBO 5 where the bot just decided it was too hard to compute 
+
+Enter the base number (n): 209338
+Enter the number of iterations (i): 21
+
+Invalid input. I-I-I think you need to enter integers for n and i. I'm so sorry if that's an inconvenience!
