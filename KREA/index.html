@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Krea Playground</title>
+    <style>
+      :root {
+        --bg: #f6efe6;
+        --ink: #1f1b16;
+        --accent: #2b6a7a;
+        --paper: #fff7ee;
+        --border: #d9c8b2;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Newsreader", "Georgia", serif;
+        color: var(--ink);
+        background:
+          radial-gradient(50rem 50rem at 15% 10%, #fde7cc 0%, transparent 55%),
+          radial-gradient(45rem 45rem at 90% 20%, #d7eef4 0%, transparent 60%),
+          var(--bg);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+      }
+      .card {
+        width: min(980px, 100%);
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 2rem;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: clamp(1.6rem, 2vw + 1rem, 2.5rem);
+        letter-spacing: 0.5px;
+      }
+      p {
+        margin: 0 0 1.2rem 0;
+        line-height: 1.5;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+      }
+      input[type="text"],
+      input[type="number"] {
+        flex: 1 1 260px;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+      button {
+        padding: 0.8rem 1.2rem;
+        font-size: 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+      .preview {
+        margin-top: 1.5rem;
+        border-radius: 14px;
+        border: 1px dashed var(--border);
+        background: #fff;
+        padding: 1rem;
+        display: grid;
+        place-items: center;
+        min-height: 320px;
+      }
+      .preview img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+      }
+      .hint {
+        font-size: 0.95rem;
+        color: #4e4b46;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Krea Playground</h1>
+      <p>Switch between text-to-image and text-to-video.</p>
+      <div class="row" style="margin-bottom: 1rem;">
+        <button id="tabTextImage">Text → Image</button>
+        <button id="tabTextVideo">Text → Video</button>
+        <button id="tabImageVideo">Image → Video</button>
+      </div>
+      <div class="row">
+        <input id="promptInput" type="text" placeholder="Prompt" />
+        <input id="sizeInput" type="text" placeholder="1024x576" />
+        <input id="stepsInput" type="number" min="1" max="100" placeholder="28" />
+        <input id="imageFileInput" type="file" accept="image/*" />
+        <input id="durationInput" type="number" min="1" max="10" placeholder="5" />
+        <input id="motionInput" type="number" min="0" max="1" step="0.1" placeholder="0.7" />
+        <input id="fpsInput" type="number" min="1" max="60" placeholder="24" />
+        <button id="genBtn">Generate</button>
+      </div>
+      <div class="preview" id="preview">
+        <div class="hint">Nothing generated yet.</div>
+      </div>
+    </main>
+
+    <script>
+      const promptInput = document.getElementById("promptInput");
+      const sizeInput = document.getElementById("sizeInput");
+      const stepsInput = document.getElementById("stepsInput");
+      const imageFileInput = document.getElementById("imageFileInput");
+      const durationInput = document.getElementById("durationInput");
+      const motionInput = document.getElementById("motionInput");
+      const fpsInput = document.getElementById("fpsInput");
+      const preview = document.getElementById("preview");
+      const genBtn = document.getElementById("genBtn");
+      const tabTextImage = document.getElementById("tabTextImage");
+      const tabTextVideo = document.getElementById("tabTextVideo");
+      const tabImageVideo = document.getElementById("tabImageVideo");
+
+      let mode = "text-image";
+
+      function applyMode() {
+        if (mode === "text-image") {
+          sizeInput.placeholder = "1024x576";
+          stepsInput.style.display = "inline-block";
+          imageFileInput.style.display = "none";
+          durationInput.style.display = "none";
+          fpsInput.style.display = "none";
+        } else if (mode === "text-video") {
+          sizeInput.placeholder = "1280x720";
+          stepsInput.style.display = "none";
+          imageFileInput.style.display = "inline-block";
+          durationInput.style.display = "inline-block";
+          motionInput.style.display = "inline-block";
+          fpsInput.style.display = "inline-block";
+        } else {
+          // image → video
+          sizeInput.placeholder = "1280x720";
+          stepsInput.style.display = "none";
+          imageFileInput.style.display = "inline-block";
+          durationInput.style.display = "inline-block";
+          motionInput.style.display = "inline-block";
+          fpsInput.style.display = "inline-block";
+        }
+      }
+
+      function readFileAsBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = String(reader.result || "");
+            const commaIndex = result.indexOf(",");
+            resolve(commaIndex >= 0 ? result.slice(commaIndex + 1) : result);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function renderImage() {
+        const prompt =
+          promptInput.value.trim() ||
+          (mode === "text-image"
+            ? "a serene mountain landscape at sunset"
+            : "a majestic eagle soaring over snow-capped mountains at sunrise");
+        const size = sizeInput.value.trim() || (mode === "text-image" ? "1024x576" : "1280x720");
+        const [widthStr, heightStr] = size.split("x");
+        const width = Number(widthStr);
+        const height = Number(heightStr);
+
+        preview.innerHTML = "<div class='hint'>Generating...</div>";
+        const endpoint = mode === "text-image" ? "/generate/image" : "/generate/video";
+        const payload =
+          mode === "text-image"
+            ? {
+                prompt,
+                width,
+                height,
+                steps: Number(stepsInput.value) || 28,
+              }
+            : {
+                prompt,
+                width,
+                height,
+                duration: Number(durationInput.value) || 5,
+                motion_strength: Number(motionInput.value) || 0.7,
+                fps: Number(fpsInput.value) || 24,
+              };
+
+        if (mode !== "text-image") {
+          const file = imageFileInput.files && imageFileInput.files[0];
+          if (file) {
+            payload.image_base64 = await readFileAsBase64(file);
+          } else if (mode === "image-video") {
+            preview.innerHTML = "<div class='hint'>Please provide an image file for image → video.</div>";
+            return;
+          }
+        }
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          preview.innerHTML = `<div class='hint'>Error: ${data.error || "Unknown error"}</div>`;
+          return;
+        }
+        const url = mode === "text-image" ? data.image_url : data.video_url;
+        if (!url) {
+          preview.innerHTML = "<div class='hint'>No URL returned.</div>";
+          return;
+        }
+        preview.innerHTML = "";
+        if (mode === "text-image") {
+          const img = document.createElement("img");
+          img.alt = "Generated image preview";
+          img.src = url;
+          preview.appendChild(img);
+        } else {
+          const video = document.createElement("video");
+          video.controls = true;
+          video.src = url;
+          if (Number.isFinite(width) && Number.isFinite(height)) {
+            video.style.maxWidth = `${width}px`;
+            video.style.maxHeight = `${height}px`;
+            video.style.width = "100%";
+            video.style.height = "auto";
+          }
+          preview.appendChild(video);
+        }
+      }
+
+      genBtn.addEventListener("click", renderImage);
+      promptInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") renderImage();
+      });
+
+      tabTextImage.addEventListener("click", () => {
+        mode = "text-image";
+        applyMode();
+      });
+      tabTextVideo.addEventListener("click", () => {
+        mode = "text-video";
+        applyMode();
+      });
+      tabImageVideo.addEventListener("click", () => {
+        mode = "image-video";
+        applyMode();
+      });
+
+      applyMode();
+    </script>
+  </body>
+</html>
