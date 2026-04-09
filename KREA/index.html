@@ -138,11 +138,12 @@
           stepsInput.style.display = "inline-block";
           imageFileInput.style.display = "none";
           durationInput.style.display = "none";
+          motionInput.style.display = "none";
           fpsInput.style.display = "none";
         } else if (mode === "text-video") {
           sizeInput.placeholder = "1280x720";
           stepsInput.style.display = "none";
-          imageFileInput.style.display = "inline-block";
+          imageFileInput.style.display = "none";
           durationInput.style.display = "inline-block";
           motionInput.style.display = "inline-block";
           fpsInput.style.display = "inline-block";
@@ -204,6 +205,8 @@
           const file = imageFileInput.files && imageFileInput.files[0];
           if (file) {
             payload.image_base64 = await readFileAsBase64(file);
+            payload.image_name = file.name;
+            payload.image_type = file.type;
           } else if (mode === "image-video") {
             preview.innerHTML = "<div class='hint'>Please provide an image file for image → video.</div>";
             return;
